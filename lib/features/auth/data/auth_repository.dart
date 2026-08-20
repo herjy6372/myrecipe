@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -14,33 +15,31 @@ class AuthRepository {
 
   User? get currentUser => _auth.currentUser;
 
-  Future<void> signInWithEmail(String email, String password) {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
-  }
-
-  Future<void> signUpWithEmail(String email, String password, {required String displayName}) async {
-    final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-    await credential.user?.updateDisplayName(displayName);
-  }
-
   Future<void> updateDisplayName(String displayName) async {
     await _auth.currentUser?.updateDisplayName(displayName);
     await _auth.currentUser?.reload();
   }
 
-  Future<void> signInWithGoogle() async {
+  /// 사용자가 구글 계정 선택 화면에서 취소하면 false를 반환한다.
+  /// (취소는 에러가 아니라 로그인을 진행하지 않기로 한 정상적인 선택이다.)
+  Future<bool> signInWithGoogle() async {
     final googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) return;
+    if (googleUser == null) return false;
     final googleAuth = await googleUser.authentication;
     final credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
     );
     await _auth.signInWithCredential(credential);
+    return true;
   }
 
   Future<void> signOut() async {
     await _googleSignIn.signOut();
     await _auth.signOut();
+    // 로그아웃 후에도 Firestore 오프라인 캐시에 이전 사용자의 프로필/즐겨찾기가
+    // 남아있으면 같은 기기의 다음 사용자나 파일시스템 접근으로 노출될 수 있으므로 지운다.
+    await FirebaseFirestore.instance.terminate();
+    await FirebaseFirestore.instance.clearPersistence();
   }
 }

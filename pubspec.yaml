@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.8
 
   # 날짜 포맷, 다국어
-  intl: any
+  intl: ^0.20.2
 
   # 앱 버전 / 기기 정보
   package_info_plus: ^8.1.1

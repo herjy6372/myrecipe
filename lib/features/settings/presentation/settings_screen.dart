@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../auth/presentation/auth_providers.dart';
-import '../../auth/presentation/profile_providers.dart';
-import 'account_info_actions.dart';
 import 'app_info_provider.dart';
 import 'locale_provider.dart';
 import 'static_text_screen.dart';
@@ -50,8 +47,6 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final localeOverride = ref.watch(localeOverrideProvider);
-    final uid = ref.watch(authStateProvider).valueOrNull?.uid;
-    final profile = ref.watch(userProfileProvider).valueOrNull;
     final appInfoAsync = ref.watch(appInfoProvider);
 
     return Scaffold(
@@ -64,25 +59,6 @@ class SettingsScreen extends ConsumerWidget {
             subtitle: Text(_languageLabel(localeOverride)),
             onTap: () => _pickLanguage(context, ref),
           ),
-          if (uid != null) ...[
-            const Divider(height: 1),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 16, 16, 4),
-              child: Align(alignment: Alignment.centerLeft, child: Text('계정 정보')),
-            ),
-            ListTile(
-              leading: const Icon(Icons.cake_outlined),
-              title: const Text('생년월일'),
-              subtitle: Text(profile?.birthDate != null ? formatBirthDate(profile!.birthDate!) : '설정 안 함'),
-              onTap: () => pickBirthDate(context, ref, uid, profile?.birthDate),
-            ),
-            ListTile(
-              leading: const Icon(Icons.phone_outlined),
-              title: const Text('휴대폰번호'),
-              subtitle: Text(profile?.phoneNumber ?? '설정 안 함'),
-              onTap: () => editPhoneNumber(context, ref, uid, profile?.phoneNumber),
-            ),
-          ],
           const Divider(height: 1),
           ListTile(
             leading: const Icon(Icons.privacy_tip_outlined),

@@ -13,7 +13,9 @@ final favoritesRepositoryProvider = Provider<FavoritesRepository>((ref) {
 
 final favoritesStreamProvider = StreamProvider<List<RecipeSummary>>((ref) {
   final uid = ref.watch(authStateProvider).valueOrNull?.uid;
-  if (uid == null) return const Stream.empty();
+  // Stream.empty()는 값을 하나도 내보내지 않고 바로 닫혀서 AsyncLoading 상태에 영원히
+  // 머무른다(스피너가 멈추지 않음). 로그인 안 된 상태를 빈 목록으로 명확히 표현한다.
+  if (uid == null) return Stream.value(const <RecipeSummary>[]);
   return ref.watch(favoritesRepositoryProvider).watchFavorites(uid);
 });
 

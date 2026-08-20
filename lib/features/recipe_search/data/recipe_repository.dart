@@ -55,4 +55,26 @@ class RecipeRepository {
     await cache.write(key, categories);
     return categories;
   }
+
+  Future<List<RecipeSummary>> filterByArea(String area) async {
+    final key = 'area:$area';
+    final cached = cache.read(key);
+    if (cached is List) {
+      return cached.map((e) => RecipeSummary.fromJson(e as Map)).toList();
+    }
+    final meals = await api.filterByArea(area);
+    await cache.write(key, meals);
+    return meals.map(RecipeSummary.fromJson).toList();
+  }
+
+  Future<List<String>> areas() async {
+    const key = 'areas';
+    final cached = cache.read(key);
+    if (cached is List) {
+      return cached.cast<String>();
+    }
+    final areas = await api.listAreas();
+    await cache.write(key, areas);
+    return areas;
+  }
 }

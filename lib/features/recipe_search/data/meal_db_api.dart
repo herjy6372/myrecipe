@@ -28,7 +28,18 @@ class MealDbApi {
   Future<List<String>> listCategories() async {
     final response = await _dio.get('$_baseUrl/list.php', queryParameters: {'c': 'list'});
     final meals = _extractMeals(response);
-    return meals.map((m) => m['strCategory'] as String).toList();
+    return meals.map((m) => m['strCategory'] as String?).whereType<String>().toList();
+  }
+
+  Future<List<Map<String, dynamic>>> filterByArea(String area) async {
+    final response = await _dio.get('$_baseUrl/filter.php', queryParameters: {'a': area});
+    return _extractMeals(response);
+  }
+
+  Future<List<String>> listAreas() async {
+    final response = await _dio.get('$_baseUrl/list.php', queryParameters: {'a': 'list'});
+    final meals = _extractMeals(response);
+    return meals.map((m) => m['strArea'] as String?).whereType<String>().toList();
   }
 
   List<Map<String, dynamic>> _extractMeals(Response response) {

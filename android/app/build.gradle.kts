@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
@@ -5,6 +7,13 @@ plugins {
     // END: FlutterFire Configuration
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+val hasKeystoreProperties = keystorePropertiesFile.exists()
+if (hasKeystoreProperties) {
+    keystoreProperties.load(keystorePropertiesFile.inputStream())
 }
 
 android {
@@ -28,11 +37,32 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (hasKeystoreProperties) {
+            create("release") {
+                storeFile = file(keystoreProperties["storeFile"] as String)
+                storePassword = keystoreProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // key.properties가 없으면 release 빌드를 debug 키로 조용히 서명하지 않고 실패시킨다.
+            // debug 서명된 release APK는 Play 심사에서 거부되거나 공개된 debug 키로 배포될 수 있다.
+            // CI에서 서명 없이 임시로 빌드해야 한다면 -PallowDebugSigning 옵션을 명시적으로 추가한다.
+            signingConfig = if (hasKeystoreProperties) {
+                signingConfigs.getByName("release")
+            } else if (project.hasProperty("allowDebugSigning")) {
+                signingConfigs.getByName("debug")
+            } else {
+                throw GradleException(
+                    "android/key.properties가 없습니다. release 빌드는 서명 키가 필요합니다. " +
+                        "debug 키로 임시 빌드하려면 -PallowDebugSigning 옵션을 추가하세요."
+                )
+            }
         }
     }
 }

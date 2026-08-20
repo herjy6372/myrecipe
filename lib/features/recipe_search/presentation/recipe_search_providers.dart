@@ -26,9 +26,14 @@ final translationServiceProvider = Provider<TranslationService>((ref) {
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 final selectedCategoryProvider = StateProvider<String?>((ref) => null);
+final selectedAreaProvider = StateProvider<String?>((ref) => null);
 
 final categoriesProvider = FutureProvider<List<String>>((ref) {
   return ref.watch(recipeRepositoryProvider).categories();
+});
+
+final areasProvider = FutureProvider<List<String>>((ref) {
+  return ref.watch(recipeRepositoryProvider).areas();
 });
 
 /// 한글 검색어면 영어로 번역한 검색어를, 아니면 원문을 그대로 반환한다.
@@ -43,6 +48,10 @@ final searchResultsProvider = FutureProvider.autoDispose<List<RecipeSummary>>((r
   final category = ref.watch(selectedCategoryProvider);
   if (category != null) {
     return repo.filterByCategory(category);
+  }
+  final area = ref.watch(selectedAreaProvider);
+  if (area != null) {
+    return repo.filterByArea(area);
   }
   final query = ref.watch(searchQueryProvider).trim();
   if (query.isEmpty) return const [];

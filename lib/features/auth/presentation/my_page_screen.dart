@@ -184,12 +184,25 @@ class _ProfileAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     const radius = 40.0;
 
-    if (customPhotoBase64 != null) {
-      return CircleAvatar(radius: radius, backgroundImage: MemoryImage(base64Decode(customPhotoBase64!)));
+    final customPhotoBytes = _decodeCustomPhoto();
+    if (customPhotoBytes != null) {
+      return CircleAvatar(radius: radius, backgroundImage: MemoryImage(customPhotoBytes));
     }
     if (user.photoURL != null) {
       return CircleAvatar(radius: radius, backgroundImage: NetworkImage(user.photoURL!));
     }
     return CircleAvatar(radius: radius, child: const Icon(Icons.person, size: 32));
+  }
+
+  // Firestore에 저장된 값이 손상/잘렸을 경우 base64Decode가 FormatException을 던지는데,
+  // 그대로 두면 build() 중 잡히지 않아 화면 전체가 크래시(빨간 화면)된다.
+  Uint8List? _decodeCustomPhoto() {
+    final base64Str = customPhotoBase64;
+    if (base64Str == null) return null;
+    try {
+      return base64Decode(base64Str);
+    } on FormatException {
+      return null;
+    }
   }
 }

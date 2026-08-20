@@ -19,14 +19,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  Future<void> _run(Future<void> Function() action) async {
+  Future<void> _run(Future<bool> Function() action) async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
     try {
-      await action();
-      if (mounted) Navigator.of(context).pop();
+      final success = await action();
+      if (success && mounted) Navigator.of(context).pop();
     } on FirebaseAuthException catch (e) {
       setState(() => _errorMessage = friendlyAuthErrorMessage(e));
     } catch (e) {

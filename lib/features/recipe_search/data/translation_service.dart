@@ -62,9 +62,23 @@ class TranslationService {
 
   /// Hive box 키는 최대 255자까지만 허용된다. 조리법 원문처럼 긴 텍스트를 키에
   /// 그대로 쓰면 HiveError가 나서, 길이+해시로 축약한 짧은 키를 대신 만든다.
+  /// Object.hashCode는 Dart/Flutter 버전 간 안정성이 보장되지 않아(캐시가 조용히
+  /// 무효화되거나 최악의 경우 다른 텍스트끼리 충돌할 수 있어) 직접 만든 안정적인
+  /// 해시(FNV-1a)를 쓴다.
   String _cacheKey(String prefix, String text) {
     if (text.length <= 150) return '$prefix:$text';
-    return '$prefix:${text.length}_${text.hashCode}';
+    return '$prefix:${text.length}_${_stableHash(text)}';
+  }
+
+  /// FNV-1a 32비트 해시. 표준 알고리즘이라 Dart 런타임 버전이 바뀌어도 항상 같은
+  /// 입력에 같은 값을 낸다.
+  int _stableHash(String text) {
+    var hash = 0x811c9dc5;
+    for (final unit in text.codeUnits) {
+      hash ^= unit;
+      hash = (hash * 0x01000193) & 0xFFFFFFFF;
+    }
+    return hash;
   }
 
   List<String> _splitIntoChunks(String text) {

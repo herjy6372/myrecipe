@@ -5,6 +5,7 @@ import '../../../core/network/error_message.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../recipe_detail/presentation/recipe_detail_screen.dart';
 import '../../settings/presentation/settings_screen.dart';
+import '../domain/area_labels.dart';
 import '../domain/category_labels.dart';
 import 'recipe_search_providers.dart';
 
@@ -27,9 +28,11 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
   @override
   Widget build(BuildContext context) {
     final categoriesAsync = ref.watch(categoriesProvider);
+    final areasAsync = ref.watch(areasProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
+    final selectedArea = ref.watch(selectedAreaProvider);
     final currentQuery = ref.watch(searchQueryProvider).trim();
-    final hasSearched = selectedCategory != null || currentQuery.isNotEmpty;
+    final hasSearched = selectedCategory != null || selectedArea != null || currentQuery.isNotEmpty;
     final isKorean = Localizations.localeOf(context).languageCode == 'ko';
     final resultsAsync = ref.watch(localizedSearchResultsProvider(isKorean));
     final translatedQueryAsync = ref.watch(translatedQueryProvider);
@@ -60,11 +63,12 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
               ),
               onSubmitted: (value) {
                 ref.read(selectedCategoryProvider.notifier).state = null;
+                ref.read(selectedAreaProvider.notifier).state = null;
                 ref.read(searchQueryProvider.notifier).state = value;
               },
             ),
           ),
-          if (selectedCategory == null && currentQuery.isNotEmpty)
+          if (selectedCategory == null && selectedArea == null && currentQuery.isNotEmpty)
             translatedQueryAsync.maybeWhen(
               data: (translated) {
                 if (translated.isEmpty ||
@@ -91,7 +95,13 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
             height: 40,
             child: categoriesAsync.when(
               loading: () => const SizedBox.shrink(),
-              error: (error, stack) => const SizedBox.shrink(),
+              error: (error, stack) => Center(
+                child: TextButton.icon(
+                  onPressed: () => ref.invalidate(categoriesProvider),
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('카테고리를 불러오지 못했어요. 다시 시도'),
+                ),
+              ),
               data: (categories) => ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -106,8 +116,44 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
                     onSelected: (isSelected) {
                       _controller.clear();
                       ref.read(searchQueryProvider.notifier).state = '';
+                      ref.read(selectedAreaProvider.notifier).state = null;
                       ref.read(selectedCategoryProvider.notifier).state =
                           isSelected ? category : null;
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            height: 40,
+            child: areasAsync.when(
+              loading: () => const SizedBox.shrink(),
+              error: (error, stack) => Center(
+                child: TextButton.icon(
+                  onPressed: () => ref.invalidate(areasProvider),
+                  icon: const Icon(Icons.refresh, size: 16),
+                  label: const Text('지역을 불러오지 못했어요. 다시 시도'),
+                ),
+              ),
+              data: (areas) => ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: areas.length,
+                separatorBuilder: (context, index) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final area = areas[index];
+                  final selected = area == selectedArea;
+                  return ChoiceChip(
+                    label: Text(areaLabel(area, useKorean: isKorean)),
+                    selected: selected,
+                    onSelected: (isSelected) {
+                      _controller.clear();
+                      ref.read(searchQueryProvider.notifier).state = '';
+                      ref.read(selectedCategoryProvider.notifier).state = null;
+                      ref.read(selectedAreaProvider.notifier).state =
+                          isSelected ? area : null;
                     },
                   );
                 },
@@ -121,6 +167,8 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
               error: (error, _) => ErrorStateView(
                 message: friendlyErrorMessage(error),
                 onRetry: () {
+                  ref.invalidate(categoriesProvider);
+                  ref.invalidate(areasProvider);
                   ref.invalidate(searchResultsProvider);
                   ref.invalidate(localizedSearchResultsProvider(isKorean));
                 },
