@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "523430032553",
+    "project_id": "myrecipe-201411",
+    "storage_bucket": "myrecipe-201411.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:523430032553:android:a90c61be3410b81539e5b8",
+        "android_client_info": {
+          "package_name": "com.terablack.myrecipe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "523430032553-vg6s7ipp44taouic51e5n5gcb8pac3ft.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.terablack.myrecipe",
+            "certificate_hash": "5045e5013d099b385b464e7d1d7ef9ccc5d93716"
+          }
+        },
+        {
+          "client_id": "523430032553-vl82dq4atb5vi18oqgpp92oqdi3em2mt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNBeUPmM7qqSDfvupgPuIbHUSGCbqoH_4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "523430032553-vl82dq4atb5vi18oqgpp92oqdi3em2mt.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "523430032553-6ce2vi9b9eghk82e2e388dj834k9p4na.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.terablack.myrecipe"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
