@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/error_message.dart';
 import '../../../core/responsive.dart';
+import '../../settings/presentation/static_text_screen.dart';
 import 'auth_error_message.dart';
 import 'auth_providers.dart';
 
@@ -15,17 +16,8 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   bool _isLoading = false;
   String? _errorMessage;
-
-  @override
-  void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   Future<void> _run(Future<void> Function() action) async {
     setState(() {
@@ -58,66 +50,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                TextField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: '이메일'),
-                ),
-                const SizedBox(height: 12),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: const InputDecoration(labelText: '비밀번호'),
-                ),
                 if (_errorMessage != null) ...[
-                  const SizedBox(height: 12),
                   Text(
                     _errorMessage!,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
+                    style: TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
+                  const SizedBox(height: 12),
                 ],
-                const SizedBox(height: 20),
-                FilledButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () => _run(
-                          () => authRepository.signInWithEmail(
-                            _emailController.text.trim(),
-                            _passwordController.text,
-                          ),
-                        ),
-                  child: const Text('로그인'),
-                ),
-                const SizedBox(height: 8),
-                OutlinedButton(
-                  onPressed: _isLoading
-                      ? null
-                      : () => _run(
-                          () => authRepository.signUpWithEmail(
-                            _emailController.text.trim(),
-                            _passwordController.text,
-                          ),
-                        ),
-                  child: const Text('이메일로 회원가입'),
-                ),
-                const SizedBox(height: 20),
-                const Row(
-                  children: [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8),
-                      child: Text('또는'),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
-                ),
-                const SizedBox(height: 20),
                 OutlinedButton.icon(
-                  onPressed: _isLoading
-                      ? null
-                      : () => _run(authRepository.signInWithGoogle),
+                  onPressed: _isLoading ? null : () => _run(authRepository.signInWithGoogle),
                   icon: const Icon(Icons.g_mobiledata),
                   label: const Text('Google로 계속하기'),
                 ),
@@ -125,6 +66,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: 20),
                   const Center(child: CircularProgressIndicator()),
                 ],
+                const SizedBox(height: 32),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const StaticTextScreen(title: '이용약관', content: termsOfServiceText),
+                        ),
+                      ),
+                      child: const Text('이용수칙'),
+                    ),
+                    const Text('·'),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              const StaticTextScreen(title: '개인정보 처리방침', content: privacyPolicyText),
+                        ),
+                      ),
+                      child: const Text('개인정보 처리방침'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),

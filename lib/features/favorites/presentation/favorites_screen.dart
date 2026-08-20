@@ -6,6 +6,7 @@ import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../auth/presentation/login_screen.dart';
 import '../../recipe_detail/presentation/recipe_detail_screen.dart';
+import '../../settings/presentation/settings_screen.dart';
 import 'favorites_providers.dart';
 
 class FavoritesScreen extends ConsumerWidget {
@@ -26,7 +27,15 @@ class FavoritesScreen extends ConsumerWidget {
     final authState = ref.watch(authStateProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('즐겨찾기')),
+      appBar: AppBar(
+        title: const Text('즐겨찾기'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
+          ),
+        ],
+      ),
       body: authState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => ErrorStateView(message: friendlyErrorMessage(error)),

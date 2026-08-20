@@ -15,5 +15,8 @@ String friendlyErrorMessage(Object error) {
         return '요청 중 오류가 발생했어요.';
     }
   }
-  return '알 수 없는 오류가 발생했어요.';
+  if (error is StateError) {
+    return '레시피 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.';
+  }
+  return '알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해주세요.';
 }

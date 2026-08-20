@@ -1,2 +1,3 @@
 CFBundleDisplayName = "My Recipe";
 CFBundleName = "My Recipe";
+NSPhotoLibraryUsageDescription = "Select a profile photo";

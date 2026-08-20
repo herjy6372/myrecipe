@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/error_message.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../recipe_detail/presentation/recipe_detail_screen.dart';
+import '../../settings/presentation/settings_screen.dart';
 import '../domain/category_labels.dart';
 import 'recipe_search_providers.dart';
 
@@ -29,12 +30,20 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
     final selectedCategory = ref.watch(selectedCategoryProvider);
     final currentQuery = ref.watch(searchQueryProvider).trim();
     final hasSearched = selectedCategory != null || currentQuery.isNotEmpty;
-    final resultsAsync = ref.watch(searchResultsProvider);
     final isKorean = Localizations.localeOf(context).languageCode == 'ko';
+    final resultsAsync = ref.watch(localizedSearchResultsProvider(isKorean));
     final translatedQueryAsync = ref.watch(translatedQueryProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('레시피 검색')),
+      appBar: AppBar(
+        title: const Text('레시피 검색'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SettingsScreen())),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -111,7 +120,10 @@ class _RecipeSearchScreenState extends ConsumerState<RecipeSearchScreen> {
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (error, _) => ErrorStateView(
                 message: friendlyErrorMessage(error),
-                onRetry: () => ref.invalidate(searchResultsProvider),
+                onRetry: () {
+                  ref.invalidate(searchResultsProvider);
+                  ref.invalidate(localizedSearchResultsProvider(isKorean));
+                },
               ),
               data: (results) {
                 if (results.isEmpty) {

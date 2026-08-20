@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/responsive.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/my_page_screen.dart';
 import 'features/favorites/presentation/favorites_screen.dart';
 import 'features/recipe_search/presentation/recipe_search_screen.dart';
+import 'features/settings/presentation/locale_provider.dart';
 
-class MyRecipeApp extends StatelessWidget {
+class MyRecipeApp extends ConsumerWidget {
   const MyRecipeApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final localeOverride = ref.watch(localeOverrideProvider);
     return MaterialApp(
       title: '나의 레시피',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
+      locale: localeOverride,
+      supportedLocales: supportedAppLocales,
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: const HomeShell(),
     );
   }

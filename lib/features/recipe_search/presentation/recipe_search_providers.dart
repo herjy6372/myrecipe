@@ -53,3 +53,19 @@ final searchResultsProvider = FutureProvider.autoDispose<List<RecipeSummary>>((r
 final recipeDetailProvider = FutureProvider.autoDispose.family<Recipe, String>((ref, id) {
   return ref.watch(recipeRepositoryProvider).getDetail(id);
 });
+
+/// 기기 로케일이 한국어일 때, 검색 결과 카드에 보이는 음식 이름도 번역해서 보여준다.
+final localizedSearchResultsProvider = FutureProvider.autoDispose.family<List<RecipeSummary>, bool>((
+  ref,
+  korean,
+) async {
+  final results = await ref.watch(searchResultsProvider.future);
+  if (!korean || results.isEmpty) return results;
+
+  final translator = ref.watch(translationServiceProvider);
+  final names = await translator.translateAllToKorean(results.map((r) => r.name).toList());
+  return [
+    for (var i = 0; i < results.length; i++)
+      RecipeSummary(id: results[i].id, name: names[i], thumbnailUrl: results[i].thumbnailUrl),
+  ];
+});

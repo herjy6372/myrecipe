@@ -7,7 +7,10 @@ class AuthRepository {
   final FirebaseAuth _auth;
   final GoogleSignIn _googleSignIn;
 
-  Stream<User?> authStateChanges() => _auth.authStateChanges();
+  /// authStateChanges()는 로그인/로그아웃에만 반응하고 프로필 변경(이름/사진)은
+  /// 알려주지 않는다. userChanges()는 updateDisplayName 같은 프로필 갱신에도
+  /// 새로 값을 흘려보내므로 이걸 화면 상태의 기준으로 쓴다.
+  Stream<User?> authStateChanges() => _auth.userChanges();
 
   User? get currentUser => _auth.currentUser;
 
@@ -15,8 +18,14 @@ class AuthRepository {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<void> signUpWithEmail(String email, String password) {
-    return _auth.createUserWithEmailAndPassword(email: email, password: password);
+  Future<void> signUpWithEmail(String email, String password, {required String displayName}) async {
+    final credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    await credential.user?.updateDisplayName(displayName);
+  }
+
+  Future<void> updateDisplayName(String displayName) async {
+    await _auth.currentUser?.updateDisplayName(displayName);
+    await _auth.currentUser?.reload();
   }
 
   Future<void> signInWithGoogle() async {
