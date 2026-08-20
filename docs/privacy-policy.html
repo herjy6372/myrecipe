@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인정보 처리방침 - 나의 레시피</title>
+<style>
+  :root {
+    --bg: #fdf1ee;
+    --card: #ffffff;
+    --text: #2b1e1a;
+    --muted: #6b5a54;
+    --accent: #a0522d;
+    --border: #f0ddd6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    line-height: 1.7;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+  header {
+    margin-bottom: 32px;
+  }
+  h1 {
+    font-size: 1.6rem;
+    margin: 0 0 8px;
+  }
+  .updated {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 28px 8px;
+  }
+  h2 {
+    font-size: 1.05rem;
+    margin: 24px 0 8px;
+    color: var(--accent);
+  }
+  h2:first-of-type { margin-top: 0; }
+  p, li { color: var(--text); }
+  ul { padding-left: 20px; margin: 8px 0 20px; }
+  li { margin-bottom: 4px; }
+  .note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+  }
+  footer {
+    margin-top: 28px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+  a { color: var(--accent); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>개인정보 처리방침</h1>
+      <div class="updated">나의 레시피 (My Recipe) · 최종 업데이트: 2026-08-20</div>
+    </header>
+
+    <div class="card">
+      <p class="note">이 앱은 개인 포트폴리오 목적으로 만든 비상업 앱입니다.</p>
+
+      <h2>1. 수집하는 정보</h2>
+      <ul>
+        <li>구글 계정 정보 (이메일, 이름, 프로필 사진) — Firebase Authentication을 통한 로그인 시</li>
+        <li>생년월일, 휴대폰번호, 커스텀 프로필 사진 — 사용자가 앱 내에서 직접 입력한 경우에만</li>
+        <li>즐겨찾기한 레시피 목록</li>
+      </ul>
+
+      <h2>2. 정보 저장 위치</h2>
+      <p>모든 정보는 Google Firebase(Firestore, Authentication)에 저장되며, 보안 규칙에 따라 본인 계정으로 로그인한 사용자만 자신의 데이터에 접근할 수 있습니다.</p>
+
+      <h2>3. 외부 서비스 이용</h2>
+      <ul>
+        <li>레시피 데이터: <a href="https://www.themealdb.com/" target="_blank" rel="noopener">TheMealDB</a> (공개 레시피 API)</li>
+        <li>한글 검색어/레시피 번역: <a href="https://mymemory.translated.net/" target="_blank" rel="noopener">MyMemory Translation API</a></li>
+      </ul>
+      <p>검색어나 레시피 텍스트가 번역을 위해 위 서비스로 전송될 수 있습니다.</p>
+
+      <h2>4. 제3자 제공</h2>
+      <p>수집한 개인정보를 광고나 마케팅 목적으로 제3자에게 판매하거나 제공하지 않습니다.</p>
+
+      <h2>5. 정보 삭제</h2>
+      <p>앱 내 로그아웃 후 계정 삭제를 원하시면 아래 문의처로 연락해주시면 처리해드립니다.</p>
+
+      <h2>6. 문의</h2>
+      <p>앱 관련 문의: <a href="mailto:herjy6372@gmail.com">herjy6372@gmail.com</a></p>
+
+      <footer>
+        <a href="terms-of-service.html">이용약관 보기</a>
+      </footer>
+    </div>
+  </div>
+</body>
+</html>
