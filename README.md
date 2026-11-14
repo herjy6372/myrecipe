@@ -5,13 +5,19 @@ TheMealDB 공개 API로 전 세계 요리 레시피를 검색하고, 즐겨찾�
 
 > 📄 **기술적 의사결정, 아키텍처, 트러블슈팅 등 상세 내용은 [docs/APP_INFO.md](docs/APP_INFO.md)를 참고해 주세요.**
 
+## 스크린샷
+
+| 카테고리 검색 결과 | 레시피 상세 (자동 번역) |
+|:---:|:---:|
+| <img src="docs/screenshots/search.png" width="260" alt="카테고리 검색 결과 화면"> | <img src="docs/screenshots/detail.png" width="260" alt="레시피 상세 화면"> |
+
 ## 주요 기능
 
 - 요리명 · 재료명 검색, 카테고리 · 지역(국가)별 필터
 - 한↔영 자동 번역 (검색어, 레시피 이름, 조리법)
 - Hive 기반 TTL 오프라인 캐시
 - Google 로그인, Firestore 즐겨찾기 · 프로필 동기화
-- 다크모드, 한국어/영어 지원
+- 한국어/영어 지원
 
 ## 기술 스택
 
